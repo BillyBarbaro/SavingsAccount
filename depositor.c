@@ -7,7 +7,6 @@ int main(int argc, char *argv[]) {
 	int deposit_amount;
 	customer *first_customer;
 
-	printf("Deposit called.\n");
 	if (argc != 2) {
 		// Raise error and exit
 	}

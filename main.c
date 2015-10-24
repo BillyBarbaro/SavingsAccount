@@ -16,7 +16,7 @@ int main () {
 	unsigned short seminit[NUM_SEMS];
 	common *shared;
 	union semun semctlarg;
-	pid_t pid1, pid2, pid3;
+	pid_t pid1, pid2, pid3, pid4;
 	customer *first_in_line;
 
 	semid = semget(SEMKEY, NUM_SEMS, 0777 | IPC_CREAT);
@@ -44,8 +44,8 @@ int main () {
 		fork_failure();
 	}
 	else if ((pid2 = fork()) == 0) {
-		printf("Withdraw 500\n");
-		customer_enter("withdrawer", "500");
+		printf("Withdraw 800\n");
+		customer_enter("withdrawer", "800");
 	}
 	else if (pid2 < 0) {
 		fork_failure();
@@ -57,7 +57,15 @@ int main () {
 	else if (pid3 < 0) {
 		fork_failure();
 	}
+	else if ((pid4 = fork()) == 0) {
+		printf("Deposit 300\n");
+		customer_enter("depositor", "300");
+	}
+	else if (pid4 < 0) {
+		fork_failure();
+	}
 
+	wait(0);
 	wait(0);
 	wait(0);
 	wait(0);

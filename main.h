@@ -67,18 +67,15 @@ customer* create_customer(int withdrawl_amount, int offset) {
 void add_customer_to_queue(customer *first_customer, int withdrawl_amount, int offset) {
 	customer *new_customer = create_customer(withdrawl_amount, offset);
 	if (first_customer == NULL) {
-		printf("New head.\n");
 		first_customer = new_customer;
 	}
 	else {
-		printf("Adding node with needed %d.\n", new_customer->amount_requested);
 		customer *ptr = first_customer;
 		while (ptr->next != NULL) {
 			ptr = ptr->next;
 		}
 		ptr->next = new_customer;
 	}
-	printf("Addition finished.\n");
 }
 
 void serve_first_in_queue(customer *first_customer) {

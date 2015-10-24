@@ -7,7 +7,6 @@ int main(int argc, char *argv[]) {
 	int withdraw_amount;
 	customer *first_customer;
 
-	printf("Withdraw called.\n");
 	if (argc != 2) {
 		// Raise error and exit
 	}
