@@ -6,6 +6,7 @@ int main(int argc, char *argv[]) {
 	common *shared;
 	int deposit_amount;
 
+	printf("Deposit called.\n");
 	if (argc != 2) {
 		// Raise error and exit
 	}
@@ -18,23 +19,23 @@ int main(int argc, char *argv[]) {
 	shared = (common *)shmat(shmid, 0, 0);
 
 	P(semid, SEM_MUTEX);
-	printf("Depositing %d dollars", deposit_amount);
+	printf("Depositing %d dollars\n", deposit_amount);
 	shared->balance = shared->balance + deposit_amount;
 	if (shared->wait_count == 0) {
-		printf("No one in line.");
-		printf("Depositor exiting");
+		printf("No one in line.\n");
+		printf("Depositor exiting\n");
 		V(semid, SEM_MUTEX);
 	}
 	else if (first_customer_amount(shared->queue) > shared->balance) {
-		printf("Current amount %d dollars.", shared->balance);
-		printf("Current customer needs %d dollars.", first_customer_amount(shared->queue));
+		printf("Current amount %d dollars.\n", shared->balance);
+		printf("Current customer needs %d dollars.\n", first_customer_amount(shared->queue));
 		printf("Depositor exiting");
 		V(semid, SEM_MUTEX);
 	}
 	else {
-		printf("Current amount %d dollars.", shared->balance);
-		printf("Current customer needs %d dollars.", first_customer_amount(shared->queue));
-		printf("Depositor exiting");
+		printf("Current amount %d dollars.\n", shared->balance);
+		printf("Current customer needs %d dollars.\n", first_customer_amount(shared->queue));
+		printf("Depositor exiting\n");
 		V(semid, SEM_WAITLIST);
 	}
 

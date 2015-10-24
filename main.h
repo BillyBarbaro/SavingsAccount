@@ -18,8 +18,6 @@
 #define SEM_MUTEX  0
 #define SEM_WAITLIST 1
 
-#define K 1024
-
 typedef struct customer {
 	int withdrawl_amount;
 } customer;
@@ -76,10 +74,21 @@ node* create_node(customer *value) {
 }
 
 void add_customer_to_queue(linked_list *queue, int withdrawl_amount) {
+	printf("Adding customer.\n");
 	customer *new_customer = create_customer(withdrawl_amount);
+	printf("Customer created.\n");
 	node *new_node = create_node(new_customer);
+	printf("Node created.\n");
+	if (queue->tail == NULL) {
+		printf("Null\n");
+	}
+	else {
+		printf("Fine\n");
+	}
 	new_node->next = queue->tail;
+	printf("Next set.\n");
 	queue->tail = new_node;
+	printf("Addition finished.\n");
 }
 
 void serve_first_in_queue(linked_list *queue) {
