@@ -17,7 +17,6 @@ int main(int argc, char *argv[]) {
 	shmid = shmget(SHMKEY, 0, 0);
 	shared = common *shmat(shmid, 0, 0);
 
-	//Deposit code here
 	P(semid, SEM_MUTEX);
 	shared->balance = shared->balance + deposit;
 	if (shared->wait_count == 0) {
