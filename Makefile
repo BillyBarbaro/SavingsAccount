@@ -1,12 +1,20 @@
 CC=gcc
+HEADERS = main.h
+OUTPUT = main depositor withdrawer
 
-default: compile
+all: $(OUTPUT)
 
-compile:
-	gcc -o main main.c
+depositor: depositor.c $(HEADERS)
+	$(CC) -o $@ $<
+
+withdrawer: withdrawer.c $(HEADERS)
+	$(CC) -o $@ $<
+
+main: main.c $(HEADERS)
+	$(CC) -o $@ $<
 
 run:
 	./main
 
 clean:
-	$(RM) main
+	@rm -f $(OUTPUT)
