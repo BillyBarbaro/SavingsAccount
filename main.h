@@ -21,7 +21,7 @@
 #define K 1024
 
 typedef struct customer {
-	int amount;
+	int withdrawl_amount;
 } customer;
 
 typedef struct node {
@@ -31,8 +31,8 @@ typedef struct node {
 
 typedef struct linked_list
 {
-	node head;
-	node tail;
+	node *head;
+	node *tail;
 } linked_list;
 
 typedef struct common {
