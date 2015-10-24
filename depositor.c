@@ -5,7 +5,7 @@ int main(int argc, char *argv[]) {
 	int semid, shmid;
 	common *shared;
 	int deposit_amount;
-	node *head;
+	customer *first_customer;
 
 	printf("Deposit called.\n");
 	if (argc != 2) {
@@ -19,28 +19,30 @@ int main(int argc, char *argv[]) {
 	shmid = shmget(SHMKEY, 0, 0);
 	shared = (common *)shmat(shmid, 0, 0);
 
-	shmid = shmget(shared->head_offset, 0, 0);
-	head = (node *)shmat(shmid, 0, 0);
-
 	P(semid, SEM_MUTEX);
+
+	shmid = shmget(shared->front_of_line, 0, 0);
+	first_customer = (customer *)shmat(shmid, 0, 0);
+
 	printf("Depositing %d dollars\n", deposit_amount);
 	shared->balance = shared->balance + deposit_amount;
 
-	printf("Head offset to %d\n", shared->head_offset);
+	printf("Head offset to %d\n", shared->customer_offset);
 	if (shared->wait_count == 0) {
 		printf("No one in line.\n");
 		printf("Depositor exiting\n");
 		V(semid, SEM_MUTEX);
 	}
-	else if (first_customer_amount(shared->head_offset) > shared->balance) {
+	else if (first_customer_amount(first_customer) > shared->balance) {
 		printf("Current amount %d dollars.\n", shared->balance);
-		printf("Current customer needs %d dollars.\n", first_customer_amount(shared->head_offset));
+		printf("Not enough for waiting withdrawer\n");
+		printf("Current customer needs %d dollars.\n", first_customer_amount(first_customer));
 		printf("Depositor exiting");
 		V(semid, SEM_MUTEX);
 	}
 	else {
 		printf("Current amount %d dollars.\n", shared->balance);
-		printf("Current customer needs %d dollars.\n", first_customer_amount(shared->head_offset));
+		printf("Current customer needs %d dollars.\n", first_customer_amount(first_customer));
 		printf("Depositor exiting\n");
 		V(semid, SEM_WAITLIST);
 	}

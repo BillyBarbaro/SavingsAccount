@@ -5,7 +5,7 @@ int main(int argc, char *argv[]) {
 	int semid, shmid;
 	common *shared;
 	int withdraw_amount;
-	node *head;
+	customer *first_customer;
 
 	printf("Withdraw called.\n");
 	if (argc != 2) {
@@ -19,10 +19,11 @@ int main(int argc, char *argv[]) {
 	shmid = shmget(SHMKEY, 0, 0);
 	shared = (common *)shmat(shmid, 0, 0);
 
-	shmid = shmget(shared->head_offset, 0, 0);
-	head = (node *)shmat(shmid, 0, 0);
-
 	P(semid, SEM_MUTEX);
+
+	shmid = shmget(shared->front_of_line, 0, 0);
+	first_customer = (customer *)shmat(shmid, 0, 0);
+
 	printf("Trying to withdraw %d dollars\n", withdraw_amount);
 	// Different from spec. > vs >=
 	if (shared->wait_count == 0 && shared->balance >= withdraw_amount) {
@@ -34,25 +35,31 @@ int main(int argc, char *argv[]) {
 	}
 	else {
 		shared->wait_count = shared->wait_count + 1;
-		add_customer_to_queue(head, withdraw_amount, shared->linked_list_offset);
-		shared->linked_list_offset = shared->linked_list_offset + 2;
+		shared->customer_offset = shared->customer_offset + 1;
 		if (shared->wait_count == 1) {
-			shared->head_offset = shared->head_offset + 2;
+			shared->front_of_line = shared->front_of_line + 1;
 		}
-		printf("Head offset to %d\n", shared->head_offset);
+		add_customer_to_queue(first_customer, withdraw_amount, shared->customer_offset);
+		printf("Head offset to %d\n", shared->customer_offset);
 		printf("Current balance %d dollars.\n", shared->balance);
 		printf("Withdrawer Waiting\n");
 		V(semid, SEM_MUTEX);
 		P(semid, SEM_WAITLIST);
-		printf("Withdrawing");
-		shared->balance = shared->balance - first_customer_amount(shared->head_offset);
-		serve_first_in_queue(head);
+
+		shmid = shmget(shared->front_of_line, 0, 0);
+		first_customer = (customer *)shmat(shmid, 0, 0);
+
+		printf("Withdrawing\n");
+		shared->balance = shared->balance - first_customer_amount(first_customer);
+		serve_first_in_queue(first_customer);
 		shared->wait_count = shared->wait_count - 1;
 		printf("Successfully withdrew %d dollars.\n", withdraw_amount);
 		printf("New balance %d dollars.\n", shared->balance);
+		if (shared->wait_count > 0) {
+			shared->front_of_line = shared->front_of_line + 1;
+		}
 		// Ask if this comparison is correct
-		if (shared->wait_count > 0 && first_customer_amount(shared->head_offset) < shared->balance) {
-			shared->head_offset = shared->head_offset + 2;
+		if (shared->wait_count > 0 && first_customer_amount(first_customer) < shared->balance) {
 			printf("Signlaing next withdrawer\n");
 			V(semid, SEM_WAITLIST);
 		}

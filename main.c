@@ -17,7 +17,7 @@ int main () {
 	common *shared;
 	union semun semctlarg;
 	pid_t pid1, pid2, pid3;
-	node *head;
+	customer *first_in_line;
 
 	semid = semget(SEMKEY, NUM_SEMS, 0777 | IPC_CREAT);
 	seminit[SEM_MUTEX]=1;
@@ -30,11 +30,11 @@ int main () {
 	shared->wait_count = 0;
 	shared->balance = 500;
 
-	shmid = shmget(LLKEY, sizeof(struct node), 0777 | IPC_CREAT);
-	head=(struct node *)shmat(shmid, 0, 0);
+	shmid = shmget(LINESTART, sizeof(struct customer), 0777 | IPC_CREAT);
+	first_in_line = (struct customer *)shmat(shmid, 0, 0);
 
-	shared->linked_list_offset = LLKEY;
-	shared->head_offset = LLKEY;
+	shared->customer_offset = LINESTART;
+	shared->front_of_line = LINESTART;
 	
 	if ((pid1 = fork()) == 0) {
 		printf("Withdraw 200\n");
