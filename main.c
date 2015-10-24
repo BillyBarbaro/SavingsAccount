@@ -54,5 +54,5 @@ int main () {
 	semctl(semid, NUM_SEMS, IPC_RMID, 0);
 	shmctl(shmid, IPC_RMID, 0);
 
-	return(EXIT_SUCCESS);
+	return EXIT_SUCCESS;
 }
