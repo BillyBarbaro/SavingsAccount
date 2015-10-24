@@ -13,6 +13,7 @@
 
 #define SEMKEY 77
 #define SHMKEY 77
+#define LLKEY 100
 
 #define NUM_SEMS   2
 #define SEM_MUTEX  0
@@ -27,16 +28,11 @@ typedef struct node {
 	struct node *next;
 } node;
 
-typedef struct linked_list
-{
-	node *head;
-	node *tail;
-} linked_list;
-
 typedef struct common {
 	int wait_count;
 	int balance;
-	linked_list *queue;
+	int linked_list_offset;
+	int head_offset;
 } common;
 
 void P(int semid, int semaphore) {
@@ -59,45 +55,59 @@ void V(int semid, int semaphore) {
 	return;
 }
 
-customer* create_customer(int withdrawl_amount) {
-	customer *new_customer = malloc(sizeof(customer));
+customer* create_customer(int withdrawl_amount, int offset) {
+
+	int shmid;
+
+	shmid = shmget(offset, sizeof(struct customer), 0777 | IPC_CREAT);
+	customer *new_customer=(struct customer *)shmat(shmid, 0, 0);
+
 	new_customer->withdrawl_amount = withdrawl_amount;
 
 	return new_customer;
 }
 
-node* create_node(customer *value) {
-	node *new_node = malloc(sizeof(node));
+node* create_node(customer *value, int offset) {
+
+	int shmid;
+
+	shmid = shmget(offset, sizeof(struct node), 0777 | IPC_CREAT);
+	node *new_node=(struct node *)shmat(shmid, 0, 0);
+
 	new_node->value = value;
 
 	return new_node;
 }
 
-void add_customer_to_queue(linked_list *queue, int withdrawl_amount) {
-	printf("Adding customer.\n");
-	customer *new_customer = create_customer(withdrawl_amount);
-	printf("Customer created.\n");
-	node *new_node = create_node(new_customer);
-	printf("Node created.\n");
-	if (queue->tail == NULL) {
-		printf("Null\n");
+void add_customer_to_queue(node *head, int withdrawl_amount, int offset) {
+	offset = offset + 1;
+	customer *new_customer = create_customer(withdrawl_amount, offset);
+	offset = offset + 1;
+	node *new_node = create_node(new_customer, offset);
+	if (head == NULL) {
+		printf("New head.\n");
+		head = new_node;
 	}
 	else {
-		printf("Fine\n");
+		printf("Adding node.\n");
+		node *ptr = head;
+		while (ptr->next != NULL) {
+			ptr = ptr->next;
+		}
+		ptr->next = new_node;
 	}
-	new_node->next = queue->tail;
-	printf("Next set.\n");
-	queue->tail = new_node;
 	printf("Addition finished.\n");
 }
 
-void serve_first_in_queue(linked_list *queue) {
-	node *current_head = queue->head;
+void serve_first_in_queue(node *current_head) {
 	node *new_head = current_head->next;
-	queue->head = new_head;
+	current_head = new_head;
 }
 
-int first_customer_amount(linked_list *queue) {
-	customer *first_customer = queue->head->value;
+int first_customer_amount(int offset) {
+	offset = offset - 1;
+	int shmid = shmget(offset, 0, 0);
+	customer *first_customer = (customer *)shmat(shmid, 0, 0);
+	//customer *first_customer = node->value;
 	return first_customer->withdrawl_amount;
 }

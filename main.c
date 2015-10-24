@@ -17,6 +17,7 @@ int main () {
 	common *shared;
 	union semun semctlarg;
 	pid_t pid1, pid2, pid3;
+	node *head;
 
 	semid = semget(SEMKEY, NUM_SEMS, 0777 | IPC_CREAT);
 	seminit[SEM_MUTEX]=1;
@@ -28,9 +29,13 @@ int main () {
 	shared=(struct common *)shmat(shmid, 0, 0);
 	shared->wait_count = 0;
 	shared->balance = 500;
-	
-	shared->queue = malloc(sizeof(linked_list));
 
+	shmid = shmget(LLKEY, sizeof(struct node), 0777 | IPC_CREAT);
+	head=(struct node *)shmat(shmid, 0, 0);
+
+	shared->linked_list_offset = LLKEY;
+	shared->head_offset = LLKEY;
+	
 	if ((pid1 = fork()) == 0) {
 		printf("Withdraw 200\n");
 		customer_enter("withdrawer", "200");
