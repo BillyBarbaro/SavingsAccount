@@ -25,7 +25,7 @@ typedef struct customer {
 } customer;
 
 typedef struct node {
-	customer value;
+	customer *value;
 	struct node *next;
 } node;
 
@@ -59,15 +59,3 @@ void V(int semid, int semaphore) {
 	semop(semid, &vsembuf, 1);
 	return;
 }
-
-union semun {
-	/* value for SETVAL */
-	int val;
-	/* buffer for IPC_STAT, IPC_SET */
-	struct semid_ds *buf;
-	/* array for GETALL, SETALL */
-	unsigned short *array;
-	/* Linux specific part: */
-	/* buffer for IPC_INFO */
-	struct seminfo *__buf;
-};
