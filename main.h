@@ -38,6 +38,7 @@ typedef struct linked_list
 typedef struct common {
 	int wait_count;
 	int balance;
+	linked_list *queue;
 } common;
 
 void P(int semid, int semaphore) {
