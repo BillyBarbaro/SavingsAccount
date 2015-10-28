@@ -39,7 +39,7 @@ int main(int argc, char *argv[]) {
 			shared->front_of_line = shared->front_of_line + 1;
 		}
 		add_customer_to_queue(first_customer, withdraw_amount, shared->customer_offset);
-		printf("Head offset to %d\n", shared->customer_offset);
+		printf("Current customer offset to %d\n", shared->customer_offset);
 		printf("Current balance %d dollars.\n", shared->balance);
 		printf("Withdrawer Waiting\n");
 		V(semid, SEM_MUTEX);
@@ -56,9 +56,11 @@ int main(int argc, char *argv[]) {
 		printf("New balance %d dollars.\n", shared->balance);
 		if (shared->wait_count > 0) {
 			shared->front_of_line = shared->front_of_line + 1;
+			shmid = shmget(shared->front_of_line, 0, 0);
+			first_customer = (customer *)shmat(shmid, 0, 0);
 		}
 		// Ask if this comparison is correct
-		if (shared->wait_count > 0 && first_customer_amount(first_customer) < shared->balance) {
+		if (shared->wait_count > 0 && first_customer_amount(first_customer) <= shared->balance) {
 			printf("Signlaing next withdrawer\n");
 			V(semid, SEM_WAITLIST);
 		}

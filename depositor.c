@@ -36,7 +36,7 @@ int main(int argc, char *argv[]) {
 		printf("Current amount %d dollars.\n", shared->balance);
 		printf("Not enough for waiting withdrawer\n");
 		printf("Current customer needs %d dollars.\n", first_customer_amount(first_customer));
-		printf("Depositor exiting");
+		printf("Depositor exiting\n");
 		V(semid, SEM_MUTEX);
 	}
 	else {
