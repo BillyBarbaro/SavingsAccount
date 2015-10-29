@@ -3,9 +3,9 @@
 int main(int argc, char *argv[]) {
 
 	int semid, shmid;
-	common *shared;
+	struct common *shared;
 	int deposit_amount;
-	customer *first_customer;
+	struct customer *first_customer;
 
 	if (argc != 2) {
 		// Raise error and exit
@@ -16,12 +16,12 @@ int main(int argc, char *argv[]) {
 
 	semid = semget(SEMKEY, NUM_SEMS, 0777);
 	shmid = shmget(SHMKEY, 0, 0);
-	shared = (common *)shmat(shmid, 0, 0);
+	shared = (struct common *)shmat(shmid, 0, 0);
 
 	P(semid, SEM_MUTEX);
 
 	shmid = shmget(shared->front_of_line, 0, 0);
-	first_customer = (customer *)shmat(shmid, 0, 0);
+	first_customer = (struct customer *)shmat(shmid, 0, 0);
 
 	printf("Depositing %d dollars\n", deposit_amount);
 	shared->balance = shared->balance + deposit_amount;

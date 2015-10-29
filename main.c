@@ -11,13 +11,12 @@ void customer_enter(char* customer_type, char *amount) {
 }
 
 int main () {
-
 	int semid, shmid;
 	unsigned short seminit[NUM_SEMS];
-	common *shared;
+	struct common *shared;
 	union semun semctlarg;
 	pid_t pid1, pid2, pid3, pid4;
-	customer *first_in_line;
+	struct customer *first_in_line;
 
 	semid = semget(SEMKEY, NUM_SEMS, 0777 | IPC_CREAT);
 	seminit[SEM_MUTEX]=1;
