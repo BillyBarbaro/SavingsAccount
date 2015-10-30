@@ -1,5 +1,19 @@
 #include "main.h"
 
+void increment_wait_count(struct common *shared) {
+	shared->wait_count = shared->wait_count + 1;
+	shared->customer_offset = shared->customer_offset + 1;
+	if (shared->wait_count == 1) {
+		shared->front_of_line = shared->front_of_line + 1;
+	}
+}
+
+void print_info(int amount, int balance) {
+	printf("Withdrawing\n");
+	printf("Successfully withdrew %d dollars.\n", amount);
+	printf("New balance %d dollars.\n", balance);
+}
+
 int main(int argc, char *argv[]) {
 
 	int semid, shmid;
@@ -29,38 +43,35 @@ int main(int argc, char *argv[]) {
 		V(semid, SEM_MUTEX);
 	}
 	else {
-		shared->wait_count = shared->wait_count + 1;
-		shared->customer_offset = shared->customer_offset + 1;
-		if (shared->wait_count == 1) {
-			shared->front_of_line = shared->front_of_line + 1;
-		}
+		increment_wait_count(shared);
+
 		add_customer_to_queue(first_customer, withdraw_amount, shared->customer_offset);
 		printf("Not enough money.  Withdrawer Waiting\n");
+
+		//signal(mutex)
 		V(semid, SEM_MUTEX);
+		//wait(wait_list)
 		P(semid, SEM_WAITLIST);
 
-		shmid = shmget(shared->front_of_line, 0, 0);
-		first_customer = (struct customer *)shmat(shmid, 0, 0);
+		first_customer = get_first_customer(shared->front_of_line);
 
-		printf("Withdrawing\n");
 		shared->balance = shared->balance - first_customer_amount(first_customer);
 		serve_first_in_queue(first_customer, shared->front_of_line);
 		shared->wait_count = shared->wait_count - 1;
-		printf("Successfully withdrew %d dollars.\n", withdraw_amount);
-		printf("New balance %d dollars.\n", shared->balance);
+
+		print_info(withdraw_amount, shared->balance);
+
 		if (shared->wait_count > 0) {
 			shared->front_of_line = shared->front_of_line + 1;
-			shmid = shmget(shared->front_of_line, 0, 0);
-			if (shmid < 0) {
-				perror("Could not get shared memory");
-				exit(EXIT_FAILURE);
-      }
-			first_customer = (struct customer *)shmat(shmid, 0, 0);
+			first_customer = get_first_customer(shared->front_of_line);
 		}
+
 		if (shared->wait_count > 0 && first_customer_amount(first_customer) <= shared->balance) {
+			//signal(wait_list)
 			V(semid, SEM_WAITLIST);
 		}
 		else {
+			//signal(mutex)
 			V(semid, SEM_MUTEX);
 		}
 	}
