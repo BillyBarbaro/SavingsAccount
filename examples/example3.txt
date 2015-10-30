@@ -1,0 +1,49 @@
+Withdrawing 200 dollars.
+New balance 300 dollars.
+Withdrawing 800 dollars.
+Not enough money.  Withdrawer Waiting
+Withdrawing 600 dollars.
+Not enough money.  Withdrawer Waiting
+Withdrawing 400 dollars.
+Not enough money.  Withdrawer Waiting
+Withdrawing 1000 dollars.
+Not enough money.  Withdrawer Waiting
+Withdrawing 100 dollars.
+Not enough money.  Withdrawer Waiting
+Withdrawing 900 dollars.
+Not enough money.  Withdrawer Waiting
+Withdrawing 300 dollars.
+Not enough money.  Withdrawer Waiting
+Withdrawing 700 dollars.
+Not enough money.  Withdrawer Waiting
+Withdrawing 300 dollars.
+Not enough money.  Withdrawer Waiting
+Depositing 5300 dollars.
+Current balance 5600 dollars.
+Withdrawing
+Successfully withdrew 800 dollars.
+New balance 4800 dollars.
+Withdrawing
+Successfully withdrew 600 dollars.
+New balance 4200 dollars.
+Withdrawing
+Successfully withdrew 400 dollars.
+New balance 3800 dollars.
+Withdrawing
+Successfully withdrew 1000 dollars.
+New balance 2800 dollars.
+Withdrawing
+Successfully withdrew 100 dollars.
+New balance 2700 dollars.
+Withdrawing
+Successfully withdrew 900 dollars.
+New balance 1800 dollars.
+Withdrawing
+Successfully withdrew 300 dollars.
+New balance 1500 dollars.
+Withdrawing
+Successfully withdrew 700 dollars.
+New balance 800 dollars.
+Withdrawing
+Successfully withdrew 300 dollars.
+New balance 500 dollars.
