@@ -1,0 +1,22 @@
+Depositing 200 dollars.
+Current balance 700 dollars.
+Depositing 300 dollars.
+Current balance 1000 dollars.
+Depositing 500 dollars.
+Current balance 1500 dollars.
+Depositing 300 dollars.
+Current balance 1800 dollars.
+Depositing 700 dollars.
+Current balance 2500 dollars.
+Depositing 400 dollars.
+Current balance 2900 dollars.
+Depositing 600 dollars.
+Current balance 3500 dollars.
+Depositing 100 dollars.
+Current balance 3600 dollars.
+Depositing 900 dollars.
+Current balance 4500 dollars.
+Withdrawing 2500 dollars.
+New balance 2000 dollars.
+Withdrawing 1000 dollars.
+New balance 1000 dollars.
