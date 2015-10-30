@@ -54,9 +54,13 @@ void V(int semid, int semaphore) {
 struct customer* create_customer(int withdrawl_amount, int offset) {
 
 	int shmid;
+	struct customer *new_customer;
 
 	shmid = shmget(offset, sizeof(struct customer), 0777 | IPC_CREAT);
-	struct customer *new_customer=(struct customer *)shmat(shmid, 0, 0);
+	if (shmid < 0) {
+		perror("Could not get shared memory");
+	}
+	new_customer=(struct customer *)shmat(shmid, 0, 0);
 
 	new_customer->amount_requested = withdrawl_amount;
 	new_customer->next = NULL;

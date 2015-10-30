@@ -16,6 +16,9 @@ int main(int argc, char *argv[]) {
 
 	semid = semget(SEMKEY, NUM_SEMS, 0777);
 	shmid = shmget(SHMKEY, 0, 0);
+	if (shmid < 0) {
+                perror("Could not get shared memory");
+        }
 	shared = (struct common *)shmat(shmid, 0, 0);
 
 	P(semid, SEM_MUTEX);

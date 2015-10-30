@@ -25,11 +25,17 @@ int main () {
 	semctl(semid, NUM_SEMS, SETALL, semctlarg);
 
 	shmid = shmget(SHMKEY, sizeof(struct common), 0777 | IPC_CREAT);
+	if (shmid < 0) {
+                perror("Could not get shared memory");
+        }
 	shared=(struct common *)shmat(shmid, 0, 0);
 	shared->wait_count = 0;
 	shared->balance = 500;
 
 	shmid = shmget(LINESTART, sizeof(struct customer), 0777 | IPC_CREAT);
+	if (shmid < 0) {
+                perror("Could not get shared memory");
+        }
 	first_in_line = (struct customer *)shmat(shmid, 0, 0);
 
 	shared->customer_offset = LINESTART;
