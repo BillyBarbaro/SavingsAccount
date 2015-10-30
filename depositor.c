@@ -23,26 +23,17 @@ int main(int argc, char *argv[]) {
 	shmid = shmget(shared->front_of_line, 0, 0);
 	first_customer = (struct customer *)shmat(shmid, 0, 0);
 
-	printf("Depositing %d dollars\n", deposit_amount);
 	shared->balance = shared->balance + deposit_amount;
 
-	printf("Head offset to %d\n", shared->customer_offset);
+	printf("Depositing %d dollars.\n", deposit_amount);
+	printf("Current balance %d dollars.\n", shared->balance);
 	if (shared->wait_count == 0) {
-		printf("No one in line.\n");
-		printf("Depositor exiting\n");
 		V(semid, SEM_MUTEX);
 	}
 	else if (first_customer_amount(first_customer) > shared->balance) {
-		printf("Current amount %d dollars.\n", shared->balance);
-		printf("Not enough for waiting withdrawer\n");
-		printf("Current customer needs %d dollars.\n", first_customer_amount(first_customer));
-		printf("Depositor exiting\n");
 		V(semid, SEM_MUTEX);
 	}
 	else {
-		printf("Current amount %d dollars.\n", shared->balance);
-		printf("Current customer needs %d dollars.\n", first_customer_amount(first_customer));
-		printf("Depositor exiting\n");
 		V(semid, SEM_WAITLIST);
 	}
 

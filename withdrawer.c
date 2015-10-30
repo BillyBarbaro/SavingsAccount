@@ -22,13 +22,10 @@ int main(int argc, char *argv[]) {
 
 	shmid = shmget(shared->front_of_line, 0, 0);
 	first_customer = (struct customer *)shmat(shmid, 0, 0);
-
-	printf("Trying to withdraw %d dollars\n", withdraw_amount);
-	// Different from spec. > vs >=
+	
+	printf("Withdrawing %d dollars.\n", withdraw_amount);
 	if (shared->wait_count == 0 && shared->balance >= withdraw_amount) {
-		printf("Withdrawing\n");
 		shared->balance = shared->balance - withdraw_amount;
-		printf("Successfully withdrew %d dollars.\n", withdraw_amount);
 		printf("New balance %d dollars.\n", shared->balance);
 		V(semid, SEM_MUTEX);
 	}
@@ -39,9 +36,7 @@ int main(int argc, char *argv[]) {
 			shared->front_of_line = shared->front_of_line + 1;
 		}
 		add_customer_to_queue(first_customer, withdraw_amount, shared->customer_offset);
-		printf("Current customer offset to %d\n", shared->customer_offset);
-		printf("Current balance %d dollars.\n", shared->balance);
-		printf("Withdrawer Waiting\n");
+		printf("Not enough money.  Withdrawer Waiting\n");
 		V(semid, SEM_MUTEX);
 		P(semid, SEM_WAITLIST);
 
@@ -60,11 +55,9 @@ int main(int argc, char *argv[]) {
 			first_customer = (struct customer *)shmat(shmid, 0, 0);
 		}
 		if (shared->wait_count > 0 && first_customer_amount(first_customer) <= shared->balance) {
-			printf("Signlaing next withdrawer\n");
 			V(semid, SEM_WAITLIST);
 		}
 		else {
-			printf("No one in line or too much asked\n");
 			V(semid, SEM_MUTEX);
 		}
 	}

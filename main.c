@@ -36,28 +36,24 @@ int main () {
 	shared->front_of_line = LINESTART;
 	
 	if ((pid1 = fork()) == 0) {
-		printf("Withdraw 200\n");
-		customer_enter("withdrawer", "200");
+		customer_enter("depositor", "200");
 	}
 	else if (pid1 < 0) {
 		fork_failure();
 	}
 	else if ((pid2 = fork()) == 0) {
-		printf("Withdraw 800\n");
 		customer_enter("withdrawer", "800");
 	}
 	else if (pid2 < 0) {
 		fork_failure();
 	}
 	else if ((pid3 = fork()) == 0) {
-		printf("Deposit 200\n");
-		customer_enter("depositor", "200");
+		customer_enter("withdrawer", "200");
 	}
 	else if (pid3 < 0) {
 		fork_failure();
 	}
 	else if ((pid4 = fork()) == 0) {
-		printf("Deposit 300\n");
 		customer_enter("depositor", "300");
 	}
 	else if (pid4 < 0) {
