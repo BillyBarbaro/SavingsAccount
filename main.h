@@ -78,10 +78,10 @@ void add_customer_to_queue(struct customer *first_customer, int withdrawl_amount
 	}
 }
 
-void serve_first_in_queue(struct customer *first_customer) {
+void serve_first_in_queue(struct customer *first_customer, int offset) {
 	struct customer *second_cutsomer = first_customer->next;
 	first_customer = second_cutsomer;
-	//Release memory here
+	shmctl(offset, IPC_RMID, 0);
 }
 
 int first_customer_amount(struct customer *first_customer) {

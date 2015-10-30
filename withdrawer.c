@@ -50,7 +50,7 @@ int main(int argc, char *argv[]) {
 
 		printf("Withdrawing\n");
 		shared->balance = shared->balance - first_customer_amount(first_customer);
-		serve_first_in_queue(first_customer);
+		serve_first_in_queue(first_customer, shared->front_of_line);
 		shared->wait_count = shared->wait_count - 1;
 		printf("Successfully withdrew %d dollars.\n", withdraw_amount);
 		printf("New balance %d dollars.\n", shared->balance);
@@ -59,7 +59,6 @@ int main(int argc, char *argv[]) {
 			shmid = shmget(shared->front_of_line, 0, 0);
 			first_customer = (struct customer *)shmat(shmid, 0, 0);
 		}
-		// Ask if this comparison is correct
 		if (shared->wait_count > 0 && first_customer_amount(first_customer) <= shared->balance) {
 			printf("Signlaing next withdrawer\n");
 			V(semid, SEM_WAITLIST);
