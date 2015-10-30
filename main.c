@@ -10,43 +10,9 @@ void customer_enter(char* customer_type, char *amount) {
 	exit(EXIT_SUCCESS);
 }
 
-int main () {
-	int semid, shmid;
-	unsigned short seminit[NUM_SEMS];
-	struct common *shared;
-	union semun semctlarg;
-	pid_t pid1, pid2, pid3, pid4, pid;
-	struct customer *first_in_line;
+void example1() {
 	int thread_count, i;
-
-	semid = semget(SEMKEY, NUM_SEMS, 0777 | IPC_CREAT);
-	if (semid < 0) {
-                perror("Could not get semaphores");
-		exit(EXIT_FAILURE);
-        }
-	seminit[SEM_MUTEX]=1;
-	seminit[SEM_WAITLIST]=0;
-	semctlarg.array = seminit;
-	semctl(semid, NUM_SEMS, SETALL, semctlarg);
-
-	shmid = shmget(SHMKEY, sizeof(struct common), 0777 | IPC_CREAT);
-	if (shmid < 0) {
-                perror("Could not get shared memory");
-       		exit(EXIT_FAILURE);
-	 }
-	shared=(struct common *)shmat(shmid, 0, 0);
-	shared->wait_count = 0;
-	shared->balance = 500;
-
-	shmid = shmget(LINESTART, sizeof(struct customer), 0777 | IPC_CREAT);
-	if (shmid < 0) {
-                perror("Could not get shared memory");
-		exit(EXIT_FAILURE);
-        }
-	first_in_line = (struct customer *)shmat(shmid, 0, 0);
-
-	shared->customer_offset = LINESTART;
-	shared->front_of_line = LINESTART;
+	pid_t pid;
 
 	thread_count = 0;
 
@@ -152,6 +118,45 @@ int main () {
 	for (i = 0; i < thread_count; i++) {
 		wait(0);
 	}
+}
+
+int main () {
+	int semid, shmid;
+	unsigned short seminit[NUM_SEMS];
+	struct common *shared;
+	union semun semctlarg;
+	struct customer *first_in_line;
+
+	semid = semget(SEMKEY, NUM_SEMS, 0777 | IPC_CREAT);
+	if (semid < 0) {
+                perror("Could not get semaphores");
+		exit(EXIT_FAILURE);
+        }
+	seminit[SEM_MUTEX]=1;
+	seminit[SEM_WAITLIST]=0;
+	semctlarg.array = seminit;
+	semctl(semid, NUM_SEMS, SETALL, semctlarg);
+
+	shmid = shmget(SHMKEY, sizeof(struct common), 0777 | IPC_CREAT);
+	if (shmid < 0) {
+                perror("Could not get shared memory");
+       		exit(EXIT_FAILURE);
+	 }
+	shared=(struct common *)shmat(shmid, 0, 0);
+	shared->wait_count = 0;
+	shared->balance = 500;
+
+	shmid = shmget(LINESTART, sizeof(struct customer), 0777 | IPC_CREAT);
+	if (shmid < 0) {
+                perror("Could not get shared memory");
+		exit(EXIT_FAILURE);
+        }
+	first_in_line = (struct customer *)shmat(shmid, 0, 0);
+
+	shared->customer_offset = LINESTART;
+	shared->front_of_line = LINESTART;
+
+	example1();
 
 	semctl(semid, NUM_SEMS, IPC_RMID, 0);
 	shmctl(shmid, IPC_RMID, 0);
