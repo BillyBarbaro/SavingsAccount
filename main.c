@@ -15,7 +15,7 @@ int main () {
 	unsigned short seminit[NUM_SEMS];
 	struct common *shared;
 	union semun semctlarg;
-	pid_t pid1, pid2, pid3, pid4;
+	pid_t pid1, pid2, pid3, pid4, pid;
 	struct customer *first_in_line;
 
 	semid = semget(SEMKEY, NUM_SEMS, 0777 | IPC_CREAT);
@@ -47,37 +47,93 @@ int main () {
 	shared->customer_offset = LINESTART;
 	shared->front_of_line = LINESTART;
 
-	if ((pid1 = fork()) == 0) {
+	if ((pid = fork()) == 0) {
 		customer_enter("depositor", "200");
 		exit(EXIT_SUCCESS);
 	}
-	else if (pid1 < 0) {
+	else if (pid < 0) {
 		fork_failure();
 	}
-	sleep(2);
-	if ((pid2 = fork()) == 0) {
+	sleep(1);
+	if ((pid = fork()) == 0) {
 		customer_enter("withdrawer", "800");
 		exit(EXIT_SUCCESS);
 	}
-	else if (pid2 < 0) {
+	else if (pid < 0) {
 		fork_failure();
 	}
-	sleep(2);
-	if ((pid3 = fork()) == 0) {
+	sleep(1);
+	if ((pid = fork()) == 0) {
 		customer_enter("withdrawer", "200");
 		exit(EXIT_SUCCESS);
 	}
-	else if (pid3 < 0) {
+	else if (pid < 0) {
 		fork_failure();
 	}
-	sleep(2);
-	if ((pid4 = fork()) == 0) {
+	sleep(1);
+	if ((pid = fork()) == 0) {
 		customer_enter("depositor", "300");
 		exit(EXIT_SUCCESS);
 	}
-	else if (pid4 < 0) {
+	else if (pid < 0) {
 		fork_failure();
 	}
+        sleep(1);
+        if ((pid = fork()) == 0) {
+                customer_enter("withdrawer", "1000");
+                exit(EXIT_SUCCESS);
+        }
+        else if (pid < 0) {
+                fork_failure();
+        }
+        sleep(1);
+        if ((pid = fork()) == 0) {
+                customer_enter("depositor", "100");
+                exit(EXIT_SUCCESS);
+        }
+        else if (pid < 0) {
+                fork_failure();
+        }
+        sleep(1);
+        if ((pid = fork()) == 0) {
+                customer_enter("depositor", "200");
+                exit(EXIT_SUCCESS);
+        }
+        else if (pid < 0) {
+                fork_failure();
+        }
+        sleep(1);
+        if ((pid = fork()) == 0) {
+                customer_enter("withdrawer", "500");
+                exit(EXIT_SUCCESS);
+        }
+        else if (pid < 0) {
+                fork_failure();
+        }
+        sleep(1);
+        if ((pid = fork()) == 0) {
+                customer_enter("depositor", "600");
+                exit(EXIT_SUCCESS);
+        }
+        else if (pid < 0) {
+                fork_failure();
+        }
+        sleep(1);
+        if ((pid = fork()) == 0) {
+                customer_enter("depositor", "300");
+                exit(EXIT_SUCCESS);
+        }
+        else if (pid < 0) {
+                fork_failure();
+        }
+        sleep(1);
+        if ((pid = fork()) == 0) {
+                customer_enter("depositor", "500");
+                exit(EXIT_SUCCESS);
+        }
+        else if (pid < 0) {
+                fork_failure();
+        }
 
 	wait(0);
 	wait(0);
