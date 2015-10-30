@@ -230,116 +230,6 @@ void example2() {
 	}
 }
 
-void example3() {
-	int thread_count, i;
-	pid_t pid;
-
-	thread_count = 0;
-
-	if ((pid = fork()) == 0) {
-		customer_enter("withdrawer", "200");
-		exit(EXIT_SUCCESS);
-	}
-	else if (pid < 0) {
-		fork_failure();
-	}
-	thread_count++;
-	sleep(1);
-	if ((pid = fork()) == 0) {
-		customer_enter("withdrawer", "800");
-		exit(EXIT_SUCCESS);
-	}
-	else if (pid < 0) {
-		fork_failure();
-	}
-	thread_count++;
-	sleep(1);
-	if ((pid = fork()) == 0) {
-		customer_enter("withdrawer", "600");
-		exit(EXIT_SUCCESS);
-	}
-	else if (pid < 0) {
-		fork_failure();
-	}
-	thread_count++;
-	sleep(1);
-	if ((pid = fork()) == 0) {
-		customer_enter("withdrawer", "400");
-		exit(EXIT_SUCCESS);
-	}
-	else if (pid < 0) {
-		fork_failure();
-	}
-	thread_count++;
-  sleep(1);
-  if ((pid = fork()) == 0) {
-          customer_enter("withdrawer", "1000");
-          exit(EXIT_SUCCESS);
-  }
-  else if (pid < 0) {
-          fork_failure();
-  }
-	thread_count++;
-  sleep(1);
-  if ((pid = fork()) == 0) {
-          customer_enter("withdrawer", "100");
-          exit(EXIT_SUCCESS);
-  }
-  else if (pid < 0) {
-          fork_failure();
-  }
-	thread_count++;
-  sleep(1);
-  if ((pid = fork()) == 0) {
-          customer_enter("withdrawer", "900");
-          exit(EXIT_SUCCESS);
-  }
-  else if (pid < 0) {
-          fork_failure();
-  }
-	thread_count++;
-  sleep(1);
-  if ((pid = fork()) == 0) {
-          customer_enter("withdrawer", "300");
-          exit(EXIT_SUCCESS);
-  }
-  else if (pid < 0) {
-          fork_failure();
-  }
-	thread_count++;
-  sleep(1);
-  if ((pid = fork()) == 0) {
-          customer_enter("withdrawer", "700");
-          exit(EXIT_SUCCESS);
-  }
-  else if (pid < 0) {
-          fork_failure();
-  }
-	thread_count++;
-  sleep(1);
-  if ((pid = fork()) == 0) {
-          customer_enter("withdrawer", "300");
-          exit(EXIT_SUCCESS);
-  }
-  else if (pid < 0) {
-          fork_failure();
-  }
-	thread_count++;
-  sleep(1);
-  if ((pid = fork()) == 0) {
-          customer_enter("depositor", "5300");
-          exit(EXIT_SUCCESS);
-  }
-  else if (pid < 0) {
-          fork_failure();
-  }
-	thread_count++;
-
-	for (i = 0; i < thread_count; i++) {
-		wait(0);
-	}
-}
-
 int main () {
 	int semid, shmid;
 	unsigned short seminit[NUM_SEMS];
@@ -378,7 +268,6 @@ int main () {
 
 	example1();
 	//example2();
-	//example3();
 
 	semctl(semid, NUM_SEMS, IPC_RMID, 0);
 	shmctl(shmid, IPC_RMID, 0);
