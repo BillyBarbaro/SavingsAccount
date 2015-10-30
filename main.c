@@ -21,6 +21,7 @@ int main () {
 	semid = semget(SEMKEY, NUM_SEMS, 0777 | IPC_CREAT);
 	if (semid < 0) {
                 perror("Could not get semaphores");
+		exit(EXIT_FAILURE);
         }
 	seminit[SEM_MUTEX]=1;
 	seminit[SEM_WAITLIST]=0;
@@ -30,7 +31,8 @@ int main () {
 	shmid = shmget(SHMKEY, sizeof(struct common), 0777 | IPC_CREAT);
 	if (shmid < 0) {
                 perror("Could not get shared memory");
-        }
+       		exit(EXIT_FAILURE);
+	 }
 	shared=(struct common *)shmat(shmid, 0, 0);
 	shared->wait_count = 0;
 	shared->balance = 500;
@@ -38,6 +40,7 @@ int main () {
 	shmid = shmget(LINESTART, sizeof(struct customer), 0777 | IPC_CREAT);
 	if (shmid < 0) {
                 perror("Could not get shared memory");
+		exit(EXIT_FAILURE);
         }
 	first_in_line = (struct customer *)shmat(shmid, 0, 0);
 

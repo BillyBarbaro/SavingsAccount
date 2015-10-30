@@ -17,10 +17,12 @@ int main(int argc, char *argv[]) {
 	semid = semget(SEMKEY, NUM_SEMS, 0777);
 	if (semid < 0) {
                 perror("Could not get semaphores");
+		exit(EXIT_FAILURE);
         }
 	shmid = shmget(SHMKEY, 0, 0);
 	if (shmid < 0) {
                 perror("Could not get shared memory");
+		exit(EXIT_FAILURE);
         }
 	shared = (struct common *)shmat(shmid, 0, 0);
 
@@ -29,6 +31,7 @@ int main(int argc, char *argv[]) {
 	shmid = shmget(shared->front_of_line, 0, 0);
 	if (shmid < 0) {
                 perror("Could not get shared memory");
+		exit(EXIT_FAILURE);
         }
 	first_customer = (struct customer *)shmat(shmid, 0, 0);
 

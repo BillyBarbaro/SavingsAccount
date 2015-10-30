@@ -59,6 +59,7 @@ struct customer* create_customer(int withdrawl_amount, int offset) {
 	shmid = shmget(offset, sizeof(struct customer), 0777 | IPC_CREAT);
 	if (shmid < 0) {
 		perror("Could not get shared memory");
+		exit(EXIT_FAILURE);
 	}
 	new_customer=(struct customer *)shmat(shmid, 0, 0);
 
