@@ -46,27 +46,34 @@ int main () {
 
 	shared->customer_offset = LINESTART;
 	shared->front_of_line = LINESTART;
-	
+
 	if ((pid1 = fork()) == 0) {
 		customer_enter("depositor", "200");
+		exit(EXIT_SUCCESS);
 	}
 	else if (pid1 < 0) {
 		fork_failure();
 	}
-	else if ((pid2 = fork()) == 0) {
+	sleep(2);
+	if ((pid2 = fork()) == 0) {
 		customer_enter("withdrawer", "800");
+		exit(EXIT_SUCCESS);
 	}
 	else if (pid2 < 0) {
 		fork_failure();
 	}
-	else if ((pid3 = fork()) == 0) {
+	sleep(2);
+	if ((pid3 = fork()) == 0) {
 		customer_enter("withdrawer", "200");
+		exit(EXIT_SUCCESS);
 	}
 	else if (pid3 < 0) {
 		fork_failure();
 	}
-	else if ((pid4 = fork()) == 0) {
+	sleep(2);
+	if ((pid4 = fork()) == 0) {
 		customer_enter("depositor", "300");
+		exit(EXIT_SUCCESS);
 	}
 	else if (pid4 < 0) {
 		fork_failure();
