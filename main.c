@@ -19,6 +19,9 @@ int main () {
 	struct customer *first_in_line;
 
 	semid = semget(SEMKEY, NUM_SEMS, 0777 | IPC_CREAT);
+	if (semid < 0) {
+                perror("Could not get semaphores");
+        }
 	seminit[SEM_MUTEX]=1;
 	seminit[SEM_WAITLIST]=0;
 	semctlarg.array = seminit;

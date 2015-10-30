@@ -15,6 +15,9 @@ int main(int argc, char *argv[]) {
 	deposit_amount = atoi(argv[1]);
 
 	semid = semget(SEMKEY, NUM_SEMS, 0777);
+	if (semid < 0) {
+                perror("Could not get semaphores");
+        }
 	shmid = shmget(SHMKEY, 0, 0);
 	if (shmid < 0) {
                 perror("Could not get shared memory");
@@ -24,6 +27,9 @@ int main(int argc, char *argv[]) {
 	P(semid, SEM_MUTEX);
 
 	shmid = shmget(shared->front_of_line, 0, 0);
+	if (shmid < 0) {
+                perror("Could not get shared memory");
+        }
 	first_customer = (struct customer *)shmat(shmid, 0, 0);
 
 	shared->balance = shared->balance + deposit_amount;
