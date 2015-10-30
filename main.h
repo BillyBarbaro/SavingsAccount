@@ -92,6 +92,40 @@ void serve_first_in_queue(struct customer *first_customer, int offset) {
 int first_customer_amount(struct customer *first_customer) {
 	return first_customer->amount_requested;
 }
+
+int get_semid() {
+	int semid;
+	semid = semget(SEMKEY, NUM_SEMS, 0777);
+	if (semid < 0) {
+		perror("Could not get semaphores depositor");
+		exit(EXIT_FAILURE);
+  }
+	return semid;
+}
+
+struct common * get_shared() {
+	int shmid;
+
+	shmid = shmget(SHMKEY, 0, 0);
+	if (shmid < 0) {
+		perror("Could not get shared memory");
+		exit(EXIT_FAILURE);
+  }
+	return (struct common *)shmat(shmid, 0, 0);
+}
+
+struct customer* get_first_customer(int front_offset) {
+
+	int shmid;
+
+	shmid = shmget(front_offset, 0, 0);
+	if (shmid < 0) {
+		perror("Could not get shared memory");
+		exit(EXIT_FAILURE);
+  }
+	return (struct customer *)shmat(shmid, 0, 0);
+}
+
 union semun {
 	/* value for SETVAL */
 	int val;

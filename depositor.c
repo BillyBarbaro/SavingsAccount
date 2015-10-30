@@ -1,38 +1,5 @@
 #include "main.h"
 
-int get_semid() {
-	int semid;
-	semid = semget(SEMKEY, NUM_SEMS, 0777);
-	if (semid < 0) {
-		perror("Could not get semaphores depositor");
-		exit(EXIT_FAILURE);
-  }
-	return semid;
-}
-
-struct common * get_shared() {
-	int shmid;
-
-	shmid = shmget(SHMKEY, 0, 0);
-	if (shmid < 0) {
-		perror("Could not get shared memory");
-		exit(EXIT_FAILURE);
-  }
-	return (struct common *)shmat(shmid, 0, 0);
-}
-
-struct customer* get_first_customer(int front_offset) {
-
-	int shmid;
-
-	shmid = shmget(front_offset, 0, 0);
-	if (shmid < 0) {
-		perror("Could not get shared memory");
-		exit(EXIT_FAILURE);
-  }
-	return (struct customer *)shmat(shmid, 0, 0);
-}
-
 void print_deposit_info(int amount, int balance) {
 	printf("Depositing %d dollars.\n", amount);
 	printf("Current balance %d dollars.\n", balance);
@@ -40,7 +7,7 @@ void print_deposit_info(int amount, int balance) {
 
 int main(int argc, char *argv[]) {
 
-	int semid, shmid;
+	int semid;
 	struct common *shared;
 	int deposit_amount;
 	struct customer *first_customer;

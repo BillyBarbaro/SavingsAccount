@@ -12,34 +12,20 @@ int main(int argc, char *argv[]) {
 		exit(EXIT_FAILURE);
 	}
 
-	// error check here
 	withdraw_amount = atoi(argv[1]);
 
-	semid = semget(SEMKEY, NUM_SEMS, 0777);
-	if (semid < 0) {
-		perror("Could not get semaphores");
-		exit(EXIT_FAILURE);
-  }
-	shmid = shmget(SHMKEY, 0, 0);
-	if (shmid < 0) {
-		perror("Could not get shared memory");
-		exit(EXIT_FAILURE);
-  }
-	shared = (struct common *)shmat(shmid, 0, 0);
+	semid = get_semid();
+	shared = get_shared();
 
 	P(semid, SEM_MUTEX);
 
-	shmid = shmget(shared->front_of_line, 0, 0);
-	if (shmid < 0) {
-    perror("Could not get shared memory");
-		exit(EXIT_FAILURE);
-  }
-	first_customer = (struct customer *)shmat(shmid, 0, 0);
+	first_customer = get_first_customer(shared->front_of_line);
 
 	printf("Withdrawing %d dollars.\n", withdraw_amount);
 	if (shared->wait_count == 0 && shared->balance >= withdraw_amount) {
 		shared->balance = shared->balance - withdraw_amount;
 		printf("New balance %d dollars.\n", shared->balance);
+		// signal(mutex)
 		V(semid, SEM_MUTEX);
 	}
 	else {
