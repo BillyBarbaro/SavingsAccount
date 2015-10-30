@@ -8,7 +8,8 @@ int main(int argc, char *argv[]) {
 	struct customer *first_customer;
 
 	if (argc != 2) {
-		// Raise error and exit
+		perror("Please enter only one argument");
+		exit(EXIT_FAILURE);
 	}
 
 	// error check here
@@ -16,25 +17,25 @@ int main(int argc, char *argv[]) {
 
 	semid = semget(SEMKEY, NUM_SEMS, 0777);
 	if (semid < 0) {
-                perror("Could not get semaphores");
+		perror("Could not get semaphores");
 		exit(EXIT_FAILURE);
-        }
+  }
 	shmid = shmget(SHMKEY, 0, 0);
 	if (shmid < 0) {
-                perror("Could not get shared memory");
+		perror("Could not get shared memory");
 		exit(EXIT_FAILURE);
-        }
+  }
 	shared = (struct common *)shmat(shmid, 0, 0);
 
 	P(semid, SEM_MUTEX);
 
 	shmid = shmget(shared->front_of_line, 0, 0);
 	if (shmid < 0) {
-                perror("Could not get shared memory");
+    perror("Could not get shared memory");
 		exit(EXIT_FAILURE);
-        }
+  }
 	first_customer = (struct customer *)shmat(shmid, 0, 0);
-	
+
 	printf("Withdrawing %d dollars.\n", withdraw_amount);
 	if (shared->wait_count == 0 && shared->balance >= withdraw_amount) {
 		shared->balance = shared->balance - withdraw_amount;
@@ -65,9 +66,9 @@ int main(int argc, char *argv[]) {
 			shared->front_of_line = shared->front_of_line + 1;
 			shmid = shmget(shared->front_of_line, 0, 0);
 			if (shmid < 0) {
-         			perror("Could not get shared memory");
+				perror("Could not get shared memory");
 				exit(EXIT_FAILURE);
-       			}
+      }
 			first_customer = (struct customer *)shmat(shmid, 0, 0);
 		}
 		if (shared->wait_count > 0 && first_customer_amount(first_customer) <= shared->balance) {

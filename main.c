@@ -17,6 +17,7 @@ int main () {
 	union semun semctlarg;
 	pid_t pid1, pid2, pid3, pid4, pid;
 	struct customer *first_in_line;
+	int thread_count, i;
 
 	semid = semget(SEMKEY, NUM_SEMS, 0777 | IPC_CREAT);
 	if (semid < 0) {
@@ -47,6 +48,8 @@ int main () {
 	shared->customer_offset = LINESTART;
 	shared->front_of_line = LINESTART;
 
+	thread_count = 0;
+
 	if ((pid = fork()) == 0) {
 		customer_enter("depositor", "200");
 		exit(EXIT_SUCCESS);
@@ -54,6 +57,7 @@ int main () {
 	else if (pid < 0) {
 		fork_failure();
 	}
+	thread_count++;
 	sleep(1);
 	if ((pid = fork()) == 0) {
 		customer_enter("withdrawer", "800");
@@ -62,6 +66,7 @@ int main () {
 	else if (pid < 0) {
 		fork_failure();
 	}
+	thread_count++;
 	sleep(1);
 	if ((pid = fork()) == 0) {
 		customer_enter("withdrawer", "200");
@@ -70,6 +75,7 @@ int main () {
 	else if (pid < 0) {
 		fork_failure();
 	}
+	thread_count++;
 	sleep(1);
 	if ((pid = fork()) == 0) {
 		customer_enter("depositor", "300");
@@ -78,67 +84,74 @@ int main () {
 	else if (pid < 0) {
 		fork_failure();
 	}
-        sleep(1);
-        if ((pid = fork()) == 0) {
-                customer_enter("withdrawer", "1000");
-                exit(EXIT_SUCCESS);
-        }
-        else if (pid < 0) {
-                fork_failure();
-        }
-        sleep(1);
-        if ((pid = fork()) == 0) {
-                customer_enter("depositor", "100");
-                exit(EXIT_SUCCESS);
-        }
-        else if (pid < 0) {
-                fork_failure();
-        }
-        sleep(1);
-        if ((pid = fork()) == 0) {
-                customer_enter("depositor", "200");
-                exit(EXIT_SUCCESS);
-        }
-        else if (pid < 0) {
-                fork_failure();
-        }
-        sleep(1);
-        if ((pid = fork()) == 0) {
-                customer_enter("withdrawer", "500");
-                exit(EXIT_SUCCESS);
-        }
-        else if (pid < 0) {
-                fork_failure();
-        }
-        sleep(1);
-        if ((pid = fork()) == 0) {
-                customer_enter("depositor", "600");
-                exit(EXIT_SUCCESS);
-        }
-        else if (pid < 0) {
-                fork_failure();
-        }
-        sleep(1);
-        if ((pid = fork()) == 0) {
-                customer_enter("depositor", "300");
-                exit(EXIT_SUCCESS);
-        }
-        else if (pid < 0) {
-                fork_failure();
-        }
-        sleep(1);
-        if ((pid = fork()) == 0) {
-                customer_enter("depositor", "500");
-                exit(EXIT_SUCCESS);
-        }
-        else if (pid < 0) {
-                fork_failure();
-        }
+	thread_count++;
+  sleep(1);
+  if ((pid = fork()) == 0) {
+          customer_enter("withdrawer", "1000");
+          exit(EXIT_SUCCESS);
+  }
+  else if (pid < 0) {
+          fork_failure();
+  }
+	thread_count++;
+  sleep(1);
+  if ((pid = fork()) == 0) {
+          customer_enter("depositor", "100");
+          exit(EXIT_SUCCESS);
+  }
+  else if (pid < 0) {
+          fork_failure();
+  }
+	thread_count++;
+  sleep(1);
+  if ((pid = fork()) == 0) {
+          customer_enter("depositor", "200");
+          exit(EXIT_SUCCESS);
+  }
+  else if (pid < 0) {
+          fork_failure();
+  }
+	thread_count++;
+  sleep(1);
+  if ((pid = fork()) == 0) {
+          customer_enter("withdrawer", "500");
+          exit(EXIT_SUCCESS);
+  }
+  else if (pid < 0) {
+          fork_failure();
+  }
+	thread_count++;
+  sleep(1);
+  if ((pid = fork()) == 0) {
+          customer_enter("depositor", "600");
+          exit(EXIT_SUCCESS);
+  }
+  else if (pid < 0) {
+          fork_failure();
+  }
+	thread_count++;
+  sleep(1);
+  if ((pid = fork()) == 0) {
+          customer_enter("depositor", "300");
+          exit(EXIT_SUCCESS);
+  }
+  else if (pid < 0) {
+          fork_failure();
+  }
+	thread_count++;
+  sleep(1);
+  if ((pid = fork()) == 0) {
+          customer_enter("depositor", "500");
+          exit(EXIT_SUCCESS);
+  }
+  else if (pid < 0) {
+          fork_failure();
+  }
+	thread_count++;
 
-	wait(0);
-	wait(0);
-	wait(0);
-	wait(0);
+	for (i = 0; i < thread_count; i++) {
+		wait(0);
+	}
 
 	semctl(semid, NUM_SEMS, IPC_RMID, 0);
 	shmctl(shmid, IPC_RMID, 0);
