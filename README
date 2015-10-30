@@ -9,7 +9,7 @@ Otherwise, the last one would wait indefinitely for another deposit.
 The program can be compiled using the command 'make'.  The directory cleaned
 using 'make clean'.  Running the program is done by calling 'make run'.
 
-There are 3 sample outputs in the examples folder.  These were run by the
+There are 2 sample outputs in the examples folder.  These were run by the
 respective methods in main.c.  If you wish to run an example, please uncomment
 it and comment out the calls to the other examples.  By default the program
 runs example 1.
